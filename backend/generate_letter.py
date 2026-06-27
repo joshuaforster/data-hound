@@ -42,12 +42,14 @@ def _parse_uk_address(raw):
 def generate_letter(lead, sender):
     pdf = FPDF()
     pdf.add_page()
-    pdf.set_margins(25, 25, 25)
+    # Use 20mm left/right, 15mm top margin so content starts near the top
+    pdf.set_margins(20, 15, 20)
     pdf.set_auto_page_break(auto=True, margin=25)
 
     NL = {"new_x": "LMARGIN", "new_y": "NEXT"}
 
     # --- Sender block: top right (UK standard layout) ---
+    pdf.set_y(15)
     pdf.set_font("Helvetica", style="B", size=10)
     pdf.cell(0, 5, sender["company_name"], align="R", **NL)
     pdf.set_font("Helvetica", size=10)
@@ -61,16 +63,23 @@ def generate_letter(lead, sender):
     pdf.ln(5)
     pdf.cell(0, 5, date.today().strftime("%d %B %Y"), align="R", **NL)
 
-    # --- Recipient address: left-aligned, Royal Mail compliant ---
-    # No blank lines between address lines; town in CAPS; postcode in CAPS on own line
-    pdf.ln(10)
+    # --- Recipient address: absolutely positioned for Pingen left window ---
+    # Pingen left address window: X=22mm, Y=60mm, W=85.5mm, H=25.5mm
+    pdf.set_font("Helvetica", size=10)
+    pdf.set_xy(22, 60)
+    recipient_name = lead.get("applicant_name", "").strip()
+    name_line = recipient_name if recipient_name else "The Occupier"
+    pdf.set_x(22)
+    pdf.cell(85.5, 5, name_line, align="L", new_x="LMARGIN", new_y="NEXT")
     for line in _parse_uk_address(lead["occupier_address"]):
-        pdf.cell(0, 5, line, align="L", **NL)
+        pdf.set_x(22)
+        pdf.cell(85.5, 5, line, align="L", new_x="LMARGIN", new_y="NEXT")
 
-    # --- Salutation ---
-    # Occupier name is unknown, so "Dear Sir or Madam" requires "Yours faithfully" sign-off
-    pdf.ln(10)
-    pdf.multi_cell(0, 5, "Dear Sir or Madam,")
+    # --- Salutation: below address block with standard spacing ---
+    pdf.set_x(20)
+    pdf.ln(12)
+    salutation = f"Dear {recipient_name}," if recipient_name else "Dear Sir or Madam,"
+    pdf.multi_cell(0, 5, salutation)
 
     # --- Subject line ---
     pdf.ln(5)
@@ -90,9 +99,10 @@ def generate_letter(lead, sender):
         "Please do not hesitate to get in touch using the contact details above."
     )
 
-    # --- Sign-off (matches "Dear Sir or Madam" salutation) ---
+    # --- Sign-off ---
     pdf.ln(10)
-    pdf.multi_cell(0, 5, "Yours faithfully,")
+    sign_off = "Yours sincerely," if recipient_name else "Yours faithfully,"
+    pdf.multi_cell(0, 5, sign_off)
     pdf.ln(15)
     pdf.multi_cell(0, 5, sender.get("name"))
 
@@ -100,8 +110,8 @@ def generate_letter(lead, sender):
 
 
 if __name__ == "__main__":
-    from fake_data import fake_leads as leads, fake_user as sender
+    from fake_data import fake_leads as leads, fake_users as users
 
-    pdf = generate_letter(leads[1], sender)
+    pdf = generate_letter(leads[1], users[0])
     pdf.output("test_letter.pdf")
     print("done, check test_letter.pdf")
