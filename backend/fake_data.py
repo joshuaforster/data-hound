@@ -1,6 +1,42 @@
+fake_users = [
+    {
+        "user_id": "c72f3b1a-9d4e-4f8a-b3c2-1a2b3c4d5e6f",
+        "name": "Daniel Harper",
+        "company_name": "Harper Property Solutions",
+        "address": "12 Exchange Street, Norwich, NR2 1AT",
+        "phone": "01603 556 789",
+        "email": "daniel@harperpropertysolutions.co.uk",
+        "website": "www.harperpropertysolutions.co.uk",
+        "logo_path": "assets/logo.png",
+        "sign_off": "Daniel Harper, Director",
+    },
+    {
+        "user_id": "b84e2c3d-1a5f-4e9b-c6d7-2b3c4d5e6f7a",
+        "name": "Sophie Brennan",
+        "company_name": "Brennan Build & Renovate",
+        "address": "7 Castle Meadow, Norwich, NR1 3DH",
+        "phone": "01603 224 410",
+        "email": "sophie@brennanbuild.co.uk",
+        "website": "www.brennanbuild.co.uk",
+        "logo_path": "assets/logo.png",
+        "sign_off": "Sophie Brennan, Managing Director",
+    },
+    {
+        "user_id": "d93f1a2b-4c6e-4d8f-a1b2-3c4d5e6f7a8b",
+        "name": "Marcus Webb",
+        "company_name": "Webb Extensions Ltd",
+        "address": "34 Ber Street, Norwich, NR1 3EJ",
+        "phone": "01603 771 852",
+        "email": "marcus@webbextensions.co.uk",
+        "website": "www.webbextensions.co.uk",
+        "logo_path": "assets/logo.png",
+        "sign_off": "Marcus Webb, Director",
+    },
+]
+
 fake_leads = [
     {
-        "my_reference": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+        "lead_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
         "council_reference": "2026/0413/F",
         "property_address": "14 Earlham Road, Norwich, NR2 3DB",
         "occupier_address": "14 Earlham Road, Norwich, NR2 3DB",
@@ -19,7 +55,7 @@ fake_leads = [
         "determination_deadline": "2026-07-10",
     },
     {
-        "my_reference": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+        "lead_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
         "council_reference": "2026/0418/HOU",
         "property_address": "27 Unthank Road, Norwich, NR2 2RW",
         "occupier_address": "27 Unthank Road, Norwich, NR2 2RW",
@@ -38,7 +74,7 @@ fake_leads = [
         "determination_deadline": "2026-06-27",
     },
     {
-        "my_reference": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+        "lead_id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
         "council_reference": "2026/0425/F",
         "property_address": "Land adjacent to 8 Dereham Road, Norwich, NR5 8QW",
         "occupier_address": "8 Dereham Road, Norwich, NR5 8QW",
@@ -57,7 +93,7 @@ fake_leads = [
         "determination_deadline": "2026-08-01",
     },
     {
-        "my_reference": "3f2504e0-4f89-41d3-9a0c-0305e82c3301",
+        "lead_id": "3f2504e0-4f89-41d3-9a0c-0305e82c3301",
         "council_reference": "2026/0431/LB",
         "property_address": "The Old Bakery, 2 Elm Hill, Norwich, NR3 1HN",
         "occupier_address": "The Old Bakery, 2 Elm Hill, Norwich, NR3 1HN",
@@ -76,7 +112,7 @@ fake_leads = [
         "determination_deadline": "2026-05-19",
     },
     {
-        "my_reference": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+        "lead_id": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
         "council_reference": "2026/0440/F",
         "property_address": "Unit 4, Hurricane Way, Norwich, NR6 6EY",
         "occupier_address": "Riverside Trading Estate, Norwich, NR1 1WS",
