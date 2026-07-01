@@ -131,3 +131,171 @@ fake_leads = [
         "determination_deadline": "2026-06-09",
     },
 ]
+
+fake_templates = [
+    {
+        "template_id": "occupier_intro",
+        "recipient_type": "occupier",
+        "source": "template",
+        "subject": "Re: your planning application {council_reference}",
+        "body": (
+            "I noticed that a planning application ({council_reference}) was recently "
+            "submitted for {property_address}, proposing {proposal}.\n\n"
+            "I'm a local builder, and I work with homeowners on projects exactly like "
+            "this one. I wanted to introduce myself early, before the diggers arrive, "
+            "in case it's useful to have an experienced builder you can talk things "
+            "through with.\n\n"
+            "There's no obligation here at all. If you'd like an informal chat about the "
+            "build, my details are at the top of this letter."
+        ),
+    },
+    {
+        "template_id": "occupier_local",
+        "recipient_type": "occupier",
+        "source": "template",
+        "subject": "Re: your planning application {council_reference}",
+        "body": (
+            "I noticed that a planning application ({council_reference}) was recently "
+            "submitted for {property_address}, proposing {proposal}.\n\n"
+            "This kind of project is one of my favourites to work on, and I've completed "
+            "a good few across {parish}, so I know what it takes to get it right.\n\n"
+            "I'm a local builder, and I wanted to introduce myself early, before the "
+            "work begins, in case it's useful to have an experienced pair of hands to "
+            "talk it through with. No obligation at all. My details are at the top."
+        ),
+    },
+    {
+        "template_id": "occupier_developer",
+        "recipient_type": "occupier",
+        "source": "template",
+        "subject": "Re: planning application {council_reference}",
+        "body": (
+            "I saw that you've applied for {proposal} at {property_address}.\n\n"
+            "We specialise in projects exactly this size, where the applicant wants a "
+            "reliable builder who can deliver to a consistent standard without the "
+            "headache of managing several trades yourself.\n\n"
+            "If you've not yet appointed a contractor, I'd value the chance to quote. "
+            "Happy to share references from similar work we've completed locally."
+        ),
+    },
+    {
+        "template_id": "agent_intro",
+        "recipient_type": "agent",
+        "source": "template",
+        "subject": "Re: planning application {council_reference}",
+        "body": (
+            "I saw that {agent_company_name} recently submitted planning application "
+            "{council_reference} for {proposal} at {property_address}.\n\n"
+            "I'm a local builder, and I work alongside agents and designers to deliver "
+            "projects like this on the ground. I wanted to introduce myself in case "
+            "you're ever looking for a reliable contractor to put in front of a "
+            "client.\n\n"
+            "I appreciate you'll have builders you already trust. If there's ever a gap, "
+            "or a project that needs an extra pair of safe hands, I'd be glad to be on "
+            "your list."
+        ),
+    },
+    {
+        "template_id": "occupier_change_of_use",
+        "recipient_type": "occupier",
+        "source": "template",
+        "subject": "Re: change of use application {council_reference}",
+        "body": (
+            "I noticed your application for {proposal} at {property_address}.\n\n"
+            "Projects like this live or die on getting the layout and the detail right "
+            "for how the space will actually be used. It's a different job from a "
+            "standard build, and it's one we've done before.\n\n"
+            "If the scheme moves forward, I'd welcome the chance to talk it through with "
+            "you. My details are above."
+        ),
+    },
+    {
+        "template_id": "contract_congrats",
+        "recipient_type": "occupier",
+        "source": "template",
+        "subject": "Congratulations on your recent contract award",
+        "body": (
+            "I saw that {applicant_name} was recently awarded the contract for "
+            "{contract_title} by {awarded_by}.\n\n"
+            "Congratulations. Winning work like this often means ramping up quickly, "
+            "and I wanted to introduce myself in case an extra reliable pair of hands "
+            "on site would help you deliver it smoothly.\n\n"
+            "No obligation at all. If it would be useful to have a local contractor you "
+            "can call on, my details are at the top of this letter."
+        ),
+    },
+    {
+        "template_id": "contract_subcontract",
+        "recipient_type": "occupier",
+        "source": "template",
+        "subject": "Subcontracting support for {contract_title}",
+        "body": (
+            "I noticed that {applicant_name} recently won the contract for "
+            "{contract_title} with {awarded_by}.\n\n"
+            "We work alongside main contractors on projects like this, taking on "
+            "packages of work so you can hit your deadlines without stretching your own "
+            "team too thin.\n\n"
+            "If you're building out your supply chain for this one, I'd welcome a "
+            "conversation. References from similar work available on request."
+        ),
+    },
+]
+
+fake_contract_leads = [
+    {
+        "lead_id": "e1c2a3b4-5d6f-4a7b-8c9d-1e2f3a4b5c6d",
+        "source": "contract",
+        "recipient_type": "occupier",
+        "applicant_name": "Broadland Construction Ltd",
+        "occupier_address": "12 Vulcan Road North, Norwich, NR6 6AQ",
+        "property_address": "12 Vulcan Road North, Norwich, NR6 6AQ",
+        "postcode": "NR6 6AQ",
+        "company_number": "09112233",
+        "company_status": "active",
+        "contract_title": "Refurbishment of Community Sports Pavilion",
+        "awarded_by": "Broadland District Council",
+        "contract_value": 342000,
+    },
+    {
+        "lead_id": "f2d3b4c5-6e7a-4b8c-9d0e-2f3a4b5c6d7e",
+        "source": "contract",
+        "recipient_type": "occupier",
+        "applicant_name": "Fenland Building Services Limited",
+        "occupier_address": "8 Hurricane Way, Norwich, NR6 6EY",
+        "property_address": "8 Hurricane Way, Norwich, NR6 6EY",
+        "postcode": "NR6 6EY",
+        "company_number": "07445566",
+        "company_status": "active",
+        "contract_title": "School Roofing Replacement Programme",
+        "awarded_by": "Norfolk County Council",
+        "contract_value": 588400,
+    },
+    {
+        "lead_id": "a3e4c5d6-7f8b-4c9d-0e1f-3a4b5c6d7e8f",
+        "source": "contract",
+        "recipient_type": "occupier",
+        "applicant_name": "Wensum Groundworks Ltd",
+        "occupier_address": "3 Barnard Road, Norwich, NR5 9JB",
+        "property_address": "3 Barnard Road, Norwich, NR5 9JB",
+        "postcode": "NR5 9JB",
+        "company_number": "10998877",
+        "company_status": "active",
+        "contract_title": "Highways Drainage and Resurfacing Works",
+        "awarded_by": "Norwich City Council",
+        "contract_value": 214750,
+    },
+    {
+        "lead_id": "b4f5d6e7-8a9c-4d0e-1f2a-4b5c6d7e8f9a",
+        "source": "contract",
+        "recipient_type": "occupier",
+        "applicant_name": "Yare Valley Contractors Limited",
+        "occupier_address": "Unit 5, Harford Bridge Business Park, Norwich, NR4 6AZ",
+        "property_address": "Unit 5, Harford Bridge Business Park, Norwich, NR4 6AZ",
+        "postcode": "NR4 6AZ",
+        "company_number": "08334455",
+        "company_status": "active",
+        "contract_title": "Extension and Fit-Out of Council Depot",
+        "awarded_by": "South Norfolk Council",
+        "contract_value": 465900,
+    },
+]

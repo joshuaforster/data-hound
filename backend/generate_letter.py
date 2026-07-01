@@ -38,15 +38,15 @@ def _parse_uk_address(raw):
 
     return lines
 
-
-def generate_letter(lead, sender):
+def generate_letter(lead, sender, letter):
     pdf = FPDF()
     pdf.add_page()
-    # Use 20mm left/right, 15mm top margin so content starts near the top
     pdf.set_margins(20, 15, 20)
     pdf.set_auto_page_break(auto=True, margin=25)
 
     NL = {"new_x": "LMARGIN", "new_y": "NEXT"}
+
+    recipient_type = letter.get("recipient_type", "occupier")
 
     # --- Sender block: top right (UK standard layout) ---
     pdf.set_y(15)
@@ -59,45 +59,52 @@ def generate_letter(lead, sender):
     pdf.cell(0, 5, sender["email"], align="R", **NL)
     pdf.cell(0, 5, sender["website"], align="R", **NL)
 
-    # --- Date: right-aligned below sender (UK format: DD Month YYYY) ---
+    # --- Date: right-aligned below sender ---
     pdf.ln(5)
     pdf.cell(0, 5, date.today().strftime("%d %B %Y"), align="R", **NL)
 
-    # --- Recipient address: absolutely positioned for Pingen left window ---
-    # Pingen left address window: X=22mm, Y=60mm, W=85.5mm, H=25.5mm
+    # --- Work out the recipient based on the letter type ---
+    if recipient_type == "agent":
+        recipient_name = lead.get("agent_name", "").strip()
+        recipient_address = lead.get("agent_company_address", "")
+        company = lead.get("agent_company_name", "").strip()
+    else:
+        recipient_name = lead.get("applicant_name", "").strip()
+        recipient_address = lead.get("occupier_address", "")
+        company = ""
+
+    # --- Recipient address: Pingen left window (X=22mm, Y=60mm) ---
     pdf.set_font("Helvetica", size=10)
     pdf.set_xy(22, 60)
-    recipient_name = lead.get("applicant_name", "").strip()
     name_line = recipient_name if recipient_name else "The Occupier"
     pdf.set_x(22)
     pdf.cell(85.5, 5, name_line, align="L", new_x="LMARGIN", new_y="NEXT")
-    for line in _parse_uk_address(lead["occupier_address"]):
+    if company:
+        pdf.set_x(22)
+        pdf.cell(85.5, 5, company, align="L", new_x="LMARGIN", new_y="NEXT")
+    for line in _parse_uk_address(recipient_address):
         pdf.set_x(22)
         pdf.cell(85.5, 5, line, align="L", new_x="LMARGIN", new_y="NEXT")
 
-    # --- Salutation: below address block with standard spacing ---
+    # --- Salutation ---
     pdf.set_x(20)
     pdf.ln(12)
     salutation = f"Dear {recipient_name}," if recipient_name else "Dear Sir or Madam,"
     pdf.multi_cell(0, 5, salutation)
 
-    # --- Subject line ---
+    # --- Subject line (from the letter) ---
     pdf.ln(5)
     pdf.set_font("Helvetica", style="B", size=10)
-    pdf.multi_cell(0, 5, f"Re: Planning Application {lead['lead_id']}")
+    pdf.multi_cell(0, 5, letter["subject"])
 
-    # --- Body ---
+    # --- Body (from the letter) ---
     pdf.ln(5)
     pdf.set_font("Helvetica", size=10)
-    pdf.multi_cell(0, 5,
-        f"We are writing regarding the recent planning application submitted for "
-        f"{lead['property_address']}, proposing: {lead['proposal']}."
-    )
-    pdf.ln(5)
-    pdf.multi_cell(0, 5,
-        "We would welcome the opportunity to discuss how we might assist with this project. "
-        "Please do not hesitate to get in touch using the contact details above."
-    )
+    paragraphs = letter["body"].split("\n\n")
+    for i, para in enumerate(paragraphs):
+        pdf.multi_cell(0, 5, para.strip())
+        if i < len(paragraphs) - 1:
+            pdf.ln(4)
 
     # --- Sign-off ---
     pdf.ln(10)
@@ -107,11 +114,3 @@ def generate_letter(lead, sender):
     pdf.multi_cell(0, 5, sender.get("name"))
 
     return pdf
-
-
-if __name__ == "__main__":
-    from fake_data import fake_leads as leads, fake_users as users
-
-    pdf = generate_letter(leads[1], users[0])
-    pdf.output("test_letter.pdf")
-    print("done, check test_letter.pdf")
