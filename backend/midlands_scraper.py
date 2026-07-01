@@ -4,7 +4,19 @@ import pdfplumber
 import requests
 import io
 import re
+import random
+import time
 from repository import insert_leads
+
+
+def human_delay(min_s=0.8, max_s=2.6):
+    """Sleep a random amount to avoid a robotic, constant-interval request pattern."""
+    time.sleep(random.uniform(min_s, max_s))
+
+
+def human_delay_long(min_s=3.0, max_s=8.0):
+    """Longer randomized pause, e.g. between councils, to vary the overall rhythm."""
+    time.sleep(random.uniform(min_s, max_s))
 
 COUNCILS = [
     # Derbyshire
@@ -101,13 +113,17 @@ def parse_table(locator):
 
 def scrape_council(page, base_url, main_url):
     page.goto(main_url)
+    human_delay()
 
     council = page.locator("#footercontent").inner_text().split("\n")[0]
 
     page.get_by_role("button", name="Search").click()
+    human_delay(0.4, 1.2)
     page.locator("#resultsPerPage").select_option("100")
+    human_delay(0.3, 0.9)
     page.get_by_role("button", name="Go").click()
     page.wait_for_selector("ul#searchresults li.searchresult")
+    human_delay()
 
     links = page.locator("ul#searchresults li.searchresult a")
     urls = [
@@ -121,6 +137,7 @@ def scrape_council(page, base_url, main_url):
     for url in urls:
         page.goto(url)
         page.wait_for_selector("table#simpleDetailsTable")
+        human_delay()
 
         summary = parse_table(page.locator("table#simpleDetailsTable"))
         if "Application Received Date" in summary:
@@ -128,10 +145,12 @@ def scrape_council(page, base_url, main_url):
 
         page.locator("a#subtab_details").click()
         page.wait_for_selector("a#subtab_details.active")
+        human_delay(0.3, 1.0)
         further = parse_table(page.locator("table#applicationDetails"))
 
         page.locator("a#subtab_dates").click()
         page.wait_for_selector("a#subtab_dates.active")
+        human_delay(0.3, 1.0)
         dates = parse_table(page.locator("table#simpleDetailsTable"))
 
         eia_raw = further.get("Environmental Assessment Requested", "")
@@ -214,7 +233,7 @@ def _scrape_ashfield_application(page, key_no):
     url = f"{ASHFIELD_SEARCH_URL}#VIEW?RefType=GFPlanning&KeyNo={key_no}&KeyText=Subject"
     page.goto(url)
     page.wait_for_selector(".civicamainheader", timeout=10000)
-    page.wait_for_timeout(500)
+    page.wait_for_timeout(random.randint(400, 1200))
 
     def get_field(css_class):
         locator = page.locator(f".civica-keyobject-fulldetails .civicadetailtext.{css_class}")
@@ -237,7 +256,7 @@ def _scrape_ashfield_application(page, key_no):
     docs_header = page.locator(".civicaaccordionheader").filter(has_text="Documents")
     if docs_header.count() > 0:
         docs_header.first.click()
-        page.wait_for_timeout(1000)
+        page.wait_for_timeout(random.randint(700, 1600))
 
     agent_name, agent_address, agent_postcode = "", "", ""
     doc_links = page.locator(".civica-doclistitem a")
@@ -250,6 +269,7 @@ def _scrape_ashfield_application(page, key_no):
                 doc_no = doc_no_match.group(1)
                 pdf_url = f"{ASHFIELD_BASE_URL}/civica/Resource/Civica/Handler.ashx/Doc/pagestream?cd=inline&pdf=true&docno={doc_no}"
                 try:
+                    human_delay(0.5, 1.5)
                     response = requests.get(pdf_url, timeout=15)
                     if response.status_code == 200:
                         agent_name, agent_address, agent_postcode = _parse_agent_from_pdf(response.content)
@@ -291,16 +311,17 @@ def gather_ashfield_results(page):
 
     page.goto(ASHFIELD_SEARCH_URL)
     page.wait_for_load_state("networkidle")
-    page.wait_for_timeout(2000)
+    page.wait_for_timeout(random.randint(1500, 3000))
 
     page.get_by_label("Valid Date (From)").click()
-    page.keyboard.type(date_from)
+    page.keyboard.type(date_from, delay=random.randint(60, 160))
+    human_delay(0.2, 0.6)
     page.get_by_label("Valid Date (To)").click()
-    page.keyboard.type(date_to)
-    page.wait_for_timeout(500)
+    page.keyboard.type(date_to, delay=random.randint(60, 160))
+    page.wait_for_timeout(random.randint(400, 900))
     page.locator("button.advancedsearchbutton").click()
     page.wait_for_load_state("networkidle")
-    page.wait_for_timeout(2000)
+    page.wait_for_timeout(random.randint(1500, 3000))
 
     key_nos = []
     while True:
@@ -315,7 +336,7 @@ def gather_ashfield_results(page):
         if next_btn.count() > 0 and "disabled-btn" not in (next_btn.get_attribute("class") or ""):
             next_btn.click()
             page.wait_for_load_state("networkidle")
-            page.wait_for_timeout(1500)
+            page.wait_for_timeout(random.randint(1000, 2200))
         else:
             break
 
@@ -326,6 +347,7 @@ def gather_ashfield_results(page):
             results.append(_scrape_ashfield_application(page, key_no))
         except Exception as e:
             print(f"  -> Ashfield KeyNo {key_no} failed: {e}")
+        human_delay()
     return results
 
 
@@ -339,12 +361,15 @@ WNC_BASE_URL = "https://wnc.planning-register.co.uk"
 def gather_west_northamptonshire_results(page):
     page.goto(f"{WNC_BASE_URL}/WeeklyList")
     page.wait_for_load_state("networkidle")
+    human_delay()
 
     page.locator("a").filter(has_text="Applications Registered Valid During Period").first.click()
     page.wait_for_load_state("networkidle")
+    human_delay(0.4, 1.2)
 
     page.locator("#resultsPerPage").select_option("50")
     page.wait_for_load_state("networkidle")
+    human_delay(0.4, 1.2)
 
     urls = []
     while True:
@@ -360,6 +385,7 @@ def gather_west_northamptonshire_results(page):
         if next_link.count() > 0:
             next_link.first.click()
             page.wait_for_load_state("networkidle")
+            human_delay(0.6, 1.6)
         else:
             break
 
@@ -370,11 +396,12 @@ def gather_west_northamptonshire_results(page):
         try:
             page.goto(url)
             page.wait_for_selector(".summaryTbl", timeout=10000)
+            human_delay()
 
             main_tab = page.locator(".tab-button").filter(has_text="Main Details")
             if main_tab.count() > 0:
                 main_tab.first.click()
-                page.wait_for_timeout(500)
+                page.wait_for_timeout(random.randint(400, 900))
 
             def get_cell(label):
                 rows = page.locator(".summaryTbl td")
@@ -398,7 +425,7 @@ def gather_west_northamptonshire_results(page):
             agents_tab = page.locator(".tab-button").filter(has_text="Applicant")
             if agents_tab.count() > 0:
                 agents_tab.first.click()
-                page.wait_for_timeout(500)
+                page.wait_for_timeout(random.randint(400, 900))
 
             def get_tab_cell(label):
                 cells = page.locator("#Applicant\\/ Agents td, #Applicant\\/\\ Agents td")
@@ -449,6 +476,8 @@ def gather_west_northamptonshire_results(page):
             print(f"  -> West Northants {url} failed: {e}")
             continue
 
+        human_delay()
+
     return results
 
 
@@ -473,6 +502,7 @@ def gather_all_results():
                 _insert_and_report(results, council["base_url"])
             except Exception as e:
                 print(f"  -> failed: {e}")
+            human_delay_long()
 
         print("Scraping Ashfield District Council ...")
         try:
@@ -480,6 +510,7 @@ def gather_all_results():
             _insert_and_report(results, "Ashfield")
         except Exception as e:
             print(f"  -> Ashfield failed: {e}")
+        human_delay_long()
 
         print("Scraping West Northamptonshire Council ...")
         try:

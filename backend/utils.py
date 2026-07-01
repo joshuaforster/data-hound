@@ -1,30 +1,24 @@
-from fake_data import fake_leads as leads, fake_users as users, fake_templates as templates, fake_contract_leads as contract_leads
+from db import query
 
-def get_lead(lead_id):
-    for lead in leads:
-        if lead.get("lead_id") == lead_id:
-            return lead
-
-def get_contract_lead(lead_id):
-    for lead in contract_leads:
-        if lead["lead_id"] == lead_id:
-            return lead
-    return None
 
 def get_user(user_id):
-    for user in users:
-        if user.get("user_id") == user_id:
-            return user
-        
-def get_template(template_id):
-    for template in templates:
-        if template.get("template_id") == template_id:
-            return template
+    return query("SELECT * FROM users WHERE user_id = %s", [user_id], fetch="one")
 
-def fill(text, lead):
-    for key, value in lead.items():
-        text = text.replace("{" + key + "}", str(value))
+
+def get_lead(lead_id):
+    return query("SELECT * FROM leads WHERE lead_id = %s", [lead_id], fetch="one")
+
+
+def get_template(template_id):
+    return query("SELECT * FROM templates WHERE template_id = %s", [template_id], fetch="one")
+
+
+def fill(text, data):
+    for key, value in data.items():
+        if value is not None:
+            text = text.replace("{" + key + "}", str(value))
     return text
+
 
 def fill_template(template, lead):
     subject = fill(template["subject"], lead)
